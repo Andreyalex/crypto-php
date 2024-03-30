@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Models\EarnApr;
 use App\Models\User;
 
 class EarnController extends Controller
@@ -13,10 +13,23 @@ class EarnController extends Controller
      * @param  int  $id
      * @return \Illuminate\View\View
      */
-    public function aprChart($id)
+    public function aprChart()
     {
-        return view('user.profile', [
-            'user' => User::findOrFail($id)
+        $x = [];
+        $y = [];
+        foreach(EarnApr::all() as $item) {
+            $x[] = (string) $item->created_at;
+            $y[] = round($item->earn_apr * 10000) / 100;
+        }
+
+        return view('earn-apr', [
+            'earnApr' => [
+                'title' => 'Simple Earn APR',
+                'x' => $x,
+                'y' => $y,
+                'minY' => min($y),
+                'maxY' => max($y)
+            ]
         ]);
     }
 }
