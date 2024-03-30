@@ -92,15 +92,23 @@ return [
             ],
         ],
 
-//        'single' => [
-//            'driver' => 'single',
-//            'path' => storage_path('logs/laravel.log'),
-//            'level' => env('LOG_LEVEL', 'debug'),
-//            'handler' => StreamHandler::class,
-//            'with' => [
-//                'stream' => 'php://output',
-//            ],
-//        ],
+        // channels below should be for laravel
+        'single' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/laravel.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'handler' => StreamHandler::class,
+            'with' => [
+                'stream' => 'php://output',
+            ],
+        ],
+        'null' => [
+            'driver' => 'monolog',
+            'handler' => NullHandler::class,
+        ],
+        'emergency' => [
+            'path' => storage_path('logs/laravel.log'),
+        ],
     ],
 
 ];
