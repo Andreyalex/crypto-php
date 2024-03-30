@@ -26,20 +26,15 @@ class EarnDaemon
 
     public function start()
     {
-        try {
-            $this->binanceClient = new \App\Robot\Binance\Spot([
-                'key' => env('BINANCE_API_KEY'),
-                'secret' => env('BINANCE_API_SECRET')
-            ]);
+        $this->binanceClient = new \App\Robot\Binance\Spot([
+            'key' => env('BINANCE_API_KEY'),
+            'secret' => env('BINANCE_API_SECRET')
+        ]);
 
-            $seconds = 60;
-            Loop::addPeriodicTimer($seconds, function () {
-                $this->pullSimpleEarnApr();
-            });
-        } catch (\Throwable $e) {
-            Log::error($e->getMessage());
-            throw $e;
-        }
+        $seconds = 60;
+        Loop::addPeriodicTimer($seconds, function () {
+            $this->pullSimpleEarnApr();
+        });
     }
 
     protected function pullSimpleEarnApr()

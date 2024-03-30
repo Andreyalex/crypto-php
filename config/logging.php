@@ -51,33 +51,24 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['console', 'single'],
+            'channels' => ['stderr', 'daily', 'telegram-errors'],
             'ignore_exceptions' => false,
-        ],
-
-        'single' => [
-            'driver' => 'single',
-            'path' => storage_path('logs/laravel.log'),
-            'level' => env('LOG_LEVEL', 'debug'),
-            'handler' => StreamHandler::class,
-            'with' => [
-                'stream' => 'php://output',
-            ],
-        ],
-
-        'console' => [
-            'driver' => 'monolog',
-            'level' => env('LOG_LEVEL', 'debug'),
-            'handler' => StreamHandler::class,
-            'with' => [
-                'stream' => 'php://stdout',
-            ],
         ],
 
         'telegram' => [
             'driver' => 'monolog',
             'handler' => TelegramBotHandler::class,
-            'level' => env('LOG_LEVEL', 'debug'),
+            'level' => 'debug',
+            'with' => [
+                'apiKey' => env('TELEGRAM_BOT_TOKEN'),
+                'channel' => env('TELEGRAM_BOT_CHAT_ID'),
+            ]
+        ],
+
+        'telegram-errors' => [
+            'driver' => 'monolog',
+            'handler' => TelegramBotHandler::class,
+            'level' => 'error',
             'with' => [
                 'apiKey' => env('TELEGRAM_BOT_TOKEN'),
                 'channel' => env('TELEGRAM_BOT_CHAT_ID'),
@@ -91,24 +82,6 @@ return [
             'days' => 14,
         ],
 
-        'slack' => [
-            'driver' => 'slack',
-            'url' => env('LOG_SLACK_WEBHOOK_URL'),
-            'username' => 'Laravel Log',
-            'emoji' => ':boom:',
-            'level' => env('LOG_LEVEL', 'critical'),
-        ],
-
-        'papertrail' => [
-            'driver' => 'monolog',
-            'level' => env('LOG_LEVEL', 'debug'),
-            'handler' => SyslogUdpHandler::class,
-            'handler_with' => [
-                'host' => env('PAPERTRAIL_URL'),
-                'port' => env('PAPERTRAIL_PORT'),
-            ],
-        ],
-
         'stderr' => [
             'driver' => 'monolog',
             'level' => env('LOG_LEVEL', 'debug'),
@@ -119,24 +92,15 @@ return [
             ],
         ],
 
-        'syslog' => [
-            'driver' => 'syslog',
-            'level' => env('LOG_LEVEL', 'debug'),
-        ],
-
-        'errorlog' => [
-            'driver' => 'errorlog',
-            'level' => env('LOG_LEVEL', 'debug'),
-        ],
-
-        'null' => [
-            'driver' => 'monolog',
-            'handler' => NullHandler::class,
-        ],
-
-        'emergency' => [
-            'path' => storage_path('logs/laravel.log'),
-        ],
+//        'single' => [
+//            'driver' => 'single',
+//            'path' => storage_path('logs/laravel.log'),
+//            'level' => env('LOG_LEVEL', 'debug'),
+//            'handler' => StreamHandler::class,
+//            'with' => [
+//                'stream' => 'php://output',
+//            ],
+//        ],
     ],
 
 ];
