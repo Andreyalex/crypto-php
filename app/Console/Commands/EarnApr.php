@@ -2,12 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Robot\Binance\Spot;
-use function array_key_exists;
-use Faker\Core\DateTime;
+use App\Robot\Daemon;
+use App\Robot\EarnDaemon;
 use Illuminate\Console\Command;
-use function Ramsey\Uuid\Generator\timestamp;
-use function var_dump;
+use Illuminate\Support\Facades\Log;
 
 class EarnApr extends Command
 {
@@ -16,14 +14,14 @@ class EarnApr extends Command
      *
      * @var string
      */
-    protected $signature = 'earn:apr';
+    protected $signature = 'earn-apr:start';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Get current Earn APR';
+    protected $description = 'Command description';
 
     /**
      * Create a new command instance.
@@ -42,20 +40,10 @@ class EarnApr extends Command
      */
     public function handle()
     {
-        $client = new Spot([
-            'key' => env('BINANCE_API_KEY'),
-            'secret' => env('BINANCE_API_SECRET')
-        ]);
-        $response = $client->flexibleList(['asset' => 'USDT']);
-        if (array_key_exists('rows', $response)) {
-            foreach($response['rows'] as $row) {
-                $model = new \App\Models\EarnApr([
-                    'asset' => $row['asset'],
-                    'earn_apr' => $row['latestAnnualPercentageRate']
-                ]);
-                $model->save();
-            }
-        }
+        Log::debug('Earn apr puller started');
+
+        $daemon = new EarnDaemon($this->output);
+        $daemon->start();
         return 0;
     }
 }
