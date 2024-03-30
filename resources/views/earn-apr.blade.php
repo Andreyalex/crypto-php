@@ -5,11 +5,13 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
     <script src="/js/chartjs-plugin-zoom.js"></script>
 
     <script>
-        const labels = @json($earnApr['x']);
+        const labels = [];
+        Array.from(@json($earnApr['x'])).forEach((item)=> labels.push(new Date(item)));
         const datapoints = @json($earnApr['y']);
         const data = {
             labels: labels,
@@ -67,13 +69,17 @@
                 },
                 scales: {
                     x: {
-                        display: true,
-                        title: {
-                            display: true
+                        type: 'time',
+                        time: {
+                            minUnit: 'hour',
+                            displayFormats: {
+                                hour: 'd MMM H:mm',
+                                day: 'd MMM',
+                                month: 'yyyy MMM d'
+                            }
                         }
                     },
                     y: {
-                        display: true,
                         title: {
                             display: true,
                             text: 'Value'

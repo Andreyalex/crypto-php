@@ -18,7 +18,7 @@ class EarnController extends Controller
         $x = [];
         $y = [];
         foreach(EarnApr::all() as $item) {
-            $x[] = (string) $item->created_at;
+            $x[] = $item->created_at->timestamp * 1000;
             $y[] = round($item->earn_apr * 10000) / 100;
         }
 
