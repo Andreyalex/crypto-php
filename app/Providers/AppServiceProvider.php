@@ -32,7 +32,7 @@ class AppServiceProvider extends ServiceProvider
             return new Binance(
                 env('BINANCE_API_KEY'),
                 env('BINANCE_API_SECRET'),
-                env('BINANCE_TEST_NET'),
+                env('BINANCE_TEST_NET')
             );
         });
     }

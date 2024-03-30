@@ -3,6 +3,7 @@
 namespace App\Robot;
 
 use Illuminate\Console\OutputStyle;
+use Illuminate\Support\Facades\Log;
 use React\EventLoop\Loop;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -25,15 +26,20 @@ class EarnDaemon
 
     public function start()
     {
-        $this->binanceClient = new \App\Robot\Binance\Spot([
-            'key' => env('BINANCE_API_KEY'),
-            'secret' => env('BINANCE_API_SECRET')
-        ]);
+        try {
+            $this->binanceClient = new \App\Robot\Binance\Spot([
+                'key' => env('BINANCE_API_KEY'),
+                'secret' => env('BINANCE_API_SECRET')
+            ]);
 
-        $seconds = 60;
-        Loop::addPeriodicTimer($seconds, function () {
-            $this->pullSimpleEarnApr();
-        });
+            $seconds = 60;
+            Loop::addPeriodicTimer($seconds, function () {
+                $this->pullSimpleEarnApr();
+            });
+        } catch (\Throwable $e) {
+            Log::error($e->getMessage());
+            throw $e;
+        }
     }
 
     protected function pullSimpleEarnApr()

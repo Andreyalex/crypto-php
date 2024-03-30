@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Robot\Daemon;
 use App\Robot\EarnDaemon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
