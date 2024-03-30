@@ -1,7 +1,7 @@
 <x-front-layout>
 
     <div>
-        <canvas id="myChart" style="width:100vw; height:100vh"></canvas>
+        <canvas id="myChart" style="width:100vw; height:80vh"></canvas>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
