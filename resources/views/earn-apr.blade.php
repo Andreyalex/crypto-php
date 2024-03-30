@@ -50,13 +50,13 @@
                     },
                     zoom: {
                         zoom: {
+                            mode: 'xy',
                             wheel: {
                                 enabled: true,
                             },
                             pinch: {
                                 enabled: true
                             },
-                            mode: 'x',
                         },
                         pan: {
                             enabled: true,
