@@ -10,37 +10,59 @@
     <script src="/js/chartjs-plugin-zoom.js"></script>
 
     <script>
-        const labels = [];
-        Array.from(@json($earnApr['x'])).forEach((item)=> labels.push(new Date(item)));
-        const datapoints = @json($earnApr['y']);
-        const data = {
-            labels: labels,
-            datasets: [
-                {
-                    label: '{{ $earnApr['title'] }}',
-                    data: datapoints,
-                    borderColor: '#FF0000',
-                    fill: false,
-                    cubicInterpolationMode: 'monotone',
-                    tension: 0.4
-                }/*, {
-                    label: 'Cubic interpolation',
-                    data: datapoints,
-                    borderColor: '#0000FF',
-                    fill: false,
-                    tension: 0.4
-                }, {
-                    label: 'Linear interpolation (default)',
-                    data: datapoints,
-                    borderColor: '#00FF00',
-                    fill: false
-                }*/
-            ]
+        const chartsData = @json($charts);
+        const datasets = [];
+
+        const scales = {
+            x: {
+                type: 'time',
+                time: {
+                    minUnit: 'hour',
+                    displayFormats: {
+                        hour: 'd MMM H:mm',
+                        day: 'd MMM',
+                        month: 'yyyy MMM d'
+                    }
+                }
+            }
         };
+
+        const colors = ['#0080FF', '#FF0080', '#80FF00', '#00FF80', '#8000FF', '#FF8000'];
+
+        let i = 0;
+        for (let label in chartsData) {
+            let asset = chartsData[label];
+            let yAxisId = `y${i}`;
+
+            Array.from(asset).map(function(item) {
+                return {'x': new Date(item.x), y: item.y }
+            });
+
+            datasets.push({
+                label: label,
+                data: asset,
+                borderColor: colors[i],
+                fill: false,
+                cubicInterpolationMode: 'monotone',
+                tension: 0.4,
+                yAxisID: yAxisId
+            });
+
+            scales[yAxisId] = {
+                title: {
+                    display: true,
+                    text: label
+                },
+            };
+
+            i++;
+        }
 
         const config = {
             type: 'line',
-            data: data,
+            data: {
+                datasets: datasets
+            },
             options: {
                 responsive: true,
                 plugins: {
@@ -67,27 +89,7 @@
                 interaction: {
                     intersect: false,
                 },
-                scales: {
-                    x: {
-                        type: 'time',
-                        time: {
-                            minUnit: 'hour',
-                            displayFormats: {
-                                hour: 'd MMM H:mm',
-                                day: 'd MMM',
-                                month: 'yyyy MMM d'
-                            }
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Value'
-                        },
-                        suggestedMin: {{ $earnApr['minY'] }},
-                        suggestedMax: {{ $earnApr['maxY'] }}
-                    }
-                },
+                scales: scales,
                 transitions: {
                     zoom: {
                         animation: {

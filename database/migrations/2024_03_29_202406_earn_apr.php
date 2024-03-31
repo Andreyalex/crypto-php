@@ -17,7 +17,7 @@ class EarnApr extends Migration
             $table->id();
             $table->string('asset');
             $table->double('earn_apr');
-            $table->timestamps();
+            $table->timestamp('time')->index();
         });
     }
 

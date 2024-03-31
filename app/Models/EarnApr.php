@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class EarnApr extends Model
 {
-    use HasFactory;
+    public $timestamps = false;
 
     protected $fillable = [
         'asset',
         'earn_apr',
+        'time'
     ];
 }

@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\EarnApr;
-use App\Models\User;
+use function array_key_exists;
+use function strtotime;
 
 class EarnController extends Controller
 {
@@ -15,21 +16,18 @@ class EarnController extends Controller
      */
     public function aprChart()
     {
-        $x = [];
-        $y = [];
-        foreach(EarnApr::all() as $item) {
-            $x[] = $item->created_at->timestamp * 1000;
-            $y[] = round($item->earn_apr * 10000) / 100;
+        $charts = [];
+        foreach(EarnApr::orderBy('time')->get() as $item) {
+            if (!array_key_exists($item['asset'], $charts)) {
+                $charts[$item['asset']] = [];
+            }
+            $charts[$item['asset']][] = [
+                'x' => strtotime($item->time) * 1000,
+                'y' => round($item->earn_apr * 10000) / 100
+            ];
         }
-
         return view('earn-apr', [
-            'earnApr' => [
-                'title' => 'Simple Earn APR',
-                'x' => $x,
-                'y' => $y,
-                'minY' => min($y),
-                'maxY' => max($y)
-            ]
+            'charts' => $charts
         ]);
     }
 }

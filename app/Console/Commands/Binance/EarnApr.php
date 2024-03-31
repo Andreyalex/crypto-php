@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Binance;
 
 use App\Robot\EarnDaemon;
 use Illuminate\Console\Command;

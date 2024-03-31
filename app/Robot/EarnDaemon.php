@@ -2,6 +2,7 @@
 
 namespace App\Robot;
 
+use function explode;
 use Illuminate\Console\OutputStyle;
 use Illuminate\Support\Facades\Log;
 use React\EventLoop\Loop;
@@ -32,7 +33,7 @@ class EarnDaemon
             'secret' => env('BINANCE_API_SECRET')
         ]);
 
-        $seconds = 60;
+        $seconds = env('BINANCE_EARN_APR_ASSETS_FETCH_PERIOD', 60);
         // first time right now. Next will be in {$seconds} seconds
         $this->pullSimpleEarnApr();
         Loop::addPeriodicTimer($seconds, function () {
@@ -47,14 +48,18 @@ class EarnDaemon
 
     protected function pullSimpleEarnApr()
     {
-        $response = $this->binanceClient->flexibleList(['asset' => 'USDT']);
-        if (array_key_exists('rows', $response)) {
-            foreach ($response['rows'] as $row) {
-                $model = new \App\Models\EarnApr([
-                    'asset' => $row['asset'],
-                    'earn_apr' => $row['latestAnnualPercentageRate']
-                ]);
-                $model->save();
+        $assets = explode(',', env('BINANCE_EARN_APR_ASSETS', 'USDT'));
+        foreach ($assets as $asset) {
+            $response = $this->binanceClient->earnFlexibleList(['asset' => $asset]);
+            if (array_key_exists('rows', $response)) {
+                foreach ($response['rows'] as $row) {
+                    $model = new \App\Models\EarnApr([
+                        'asset' => $row['asset'],
+                        'earn_apr' => $row['latestAnnualPercentageRate'],
+                        'time' => time()
+                    ]);
+                    $model->save();
+                }
             }
         }
     }
