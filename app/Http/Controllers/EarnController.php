@@ -22,7 +22,7 @@ class EarnController extends Controller
                 $charts[$item['asset']] = [];
             }
             $charts[$item['asset']][] = [
-                'x' => strtotime($item->time) * 1000,
+                'x' => $item->time * 1000,
                 'y' => round($item->earn_apr * 10000) / 100
             ];
         }

@@ -56,7 +56,7 @@ class EarnDaemon
                     $model = new \App\Models\EarnApr([
                         'asset' => $row['asset'],
                         'earn_apr' => $row['latestAnnualPercentageRate'],
-                        'time' => date('Y-m-d H:i:s')
+                        'time' => time()
                     ]);
                     $model->save();
                 }

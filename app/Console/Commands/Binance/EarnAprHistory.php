@@ -5,6 +5,7 @@ namespace App\Console\Commands\Binance;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use function in_array;
+use function intval;
 use function strtotime;
 
 class EarnAprHistory extends Command
@@ -62,11 +63,11 @@ class EarnAprHistory extends Command
             if ($times === null) {
                 $times = \App\Models\EarnApr::where('asset', $row['asset'])->pluck('time')->toArray();
             }
-            if (in_array(date('Y-m-d H:i:s', $row['time']/1000), $times)) continue;
+            if (in_array(intval($row['time'] / 1000), $times)) continue;
             $model = new \App\Models\EarnApr([
                 'asset' => $row['asset'],
                 'earn_apr' => $row['annualPercentageRate'],
-                'time' => date('Y-m-d H:i:s', $row['time'] / 1000)
+                'time' => intval($row['time'] / 1000)
             ]);
             $model->save();
         }
