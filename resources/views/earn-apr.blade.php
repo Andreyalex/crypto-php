@@ -88,7 +88,7 @@
                     },
                     zoom: {
                         zoom: {
-                            mode: 'xy',
+                            mode: 'x',
                             wheel: {
                                 enabled: true,
                             },
@@ -98,7 +98,7 @@
                         },
                         pan: {
                             enabled: true,
-                            mode: 'xy'
+                            mode: 'x'
                         }
                     }
                 },
