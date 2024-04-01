@@ -38,6 +38,12 @@
                 return {'x': new Date(item.x), y: item.y }
             });
 
+            scales[yAxisId] = {
+                title: {
+                    text: label
+                },
+            };
+
             datasets.push({
                 label: label,
                 data: asset,
@@ -45,7 +51,8 @@
                 fill: false,
                 cubicInterpolationMode: 'monotone',
                 tension: 0.4,
-                yAxisID: yAxisId
+                yAxisID: yAxisId,
+                scale: scales[yAxisId],
             });
 
             scales[yAxisId] = {
@@ -69,6 +76,15 @@
                     title: {
                         display: true,
                         text: 'Chart.js Line Chart - Cubic interpolation mode'
+                    },
+                    legend: {
+                        onClick: function(event, label) {
+                            let dataset = event.chart.getDatasetMeta(label.datasetIndex);
+                            let scale = event.chart.config.options.scales[`y${label.datasetIndex}`];
+                            scale.display = !scale.display;
+                            dataset.hidden = !dataset.hidden;
+                            event.chart.update();
+                        }
                     },
                     zoom: {
                         zoom: {
@@ -97,13 +113,25 @@
                             easing: 'easeOutCubic'
                         }
                     }
+                },
+                elements: {
+                    point: {
+                        pointStyle: false
+                    }
                 }
             },
         };
 
         const ctx = document.getElementById('myChart');
+        const chart = new Chart(ctx, config);
 
-        new Chart(ctx, config);
+        chart.data.datasets.forEach((dataSet, i) => {
+            let meta = chart.getDatasetMeta(i);
+            let scale = chart.config.options.scales[`y${i}`];
+            meta.hidden = (i !== 0);
+            scale.display = (i === 0);
+        });
+        chart.update();
 
     </script>
 </x-front-layout>

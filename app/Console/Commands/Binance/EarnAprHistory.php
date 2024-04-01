@@ -47,30 +47,42 @@ class EarnAprHistory extends Command
             'key' => env('BINANCE_API_KEY'),
             'secret' => env('BINANCE_API_SECRET')
         ]);
-        $response = $client->earnFlexibleRateHistory([
-            'productId' => $this->option('productId'),
-            'startTime' => $this->option('start')? strtotime($this->option('start')) : null,
-            'endTime' => $this->option('end')? strtotime($this->option('end')) * 1000 : null,
-            'size' => 100
-        ]);
 
-        if (!array_key_exists('rows', $response)) {
-            return 1;
-        }
-
+        $size = 100;
+        $current = 0;
+        $total = null;
         $times = null;
-        foreach ($response['rows'] as $row) {
-            if ($times === null) {
-                $times = \App\Models\EarnApr::where('asset', $row['asset'])->pluck('time')->toArray();
-            }
-            if (in_array(intval($row['time'] / 1000), $times)) continue;
-            $model = new \App\Models\EarnApr([
-                'asset' => $row['asset'],
-                'earn_apr' => $row['annualPercentageRate'],
-                'time' => intval($row['time'] / 1000)
+
+        do {
+            $current++;
+
+            $response = $client->earnFlexibleRateHistory([
+                'productId' => $this->option('productId'),
+                'startTime' => $this->option('start') ? strtotime($this->option('start')) * 1000 : null,
+                'endTime' => $this->option('end') ? strtotime($this->option('end')) * 1000 : null,
+                'size' => $size,
+                'current' => $current
             ]);
-            $model->save();
-        }
+
+            if (!array_key_exists('rows', $response)) {
+                break;
+            }
+
+            if ($total === null) $total = $response['total'];
+
+            foreach ($response['rows'] as $row) {
+                if ($times === null) {
+                    $times = \App\Models\EarnApr::where('asset', $row['asset'])->pluck('time')->toArray();
+                }
+                if (in_array(intval($row['time'] / 1000), $times)) continue;
+                $model = new \App\Models\EarnApr([
+                    'asset' => $row['asset'],
+                    'earn_apr' => $row['annualPercentageRate'],
+                    'time' => intval($row['time'] / 1000)
+                ]);
+                $model->save();
+            }
+        } while ($current * $size < $total);
 
         return 0;
     }

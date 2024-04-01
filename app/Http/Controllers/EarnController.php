@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\EarnApr;
 use function array_key_exists;
-use function strtotime;
+use function explode;
 
 class EarnController extends Controller
 {
@@ -17,7 +17,12 @@ class EarnController extends Controller
     public function aprChart()
     {
         $charts = [];
-        foreach(EarnApr::orderBy('time')->get() as $item) {
+        $data = EarnApr
+            ::whereIn('asset', explode(',', env('BINANCE_EARN_APR_ASSETS', 'USDT')))
+            ->orderBy('time')
+            ->get();
+
+        foreach($data as $item) {
             if (!array_key_exists($item['asset'], $charts)) {
                 $charts[$item['asset']] = [];
             }
