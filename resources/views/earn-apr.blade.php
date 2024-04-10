@@ -34,7 +34,7 @@
             let asset = chartsData[label];
             let yAxisId = `y${i}`;
 
-            Array.from(asset).map(function(item) {
+            Array.from(asset.data).map(function(item) {
                 return {'x': new Date(item.x), y: item.y }
             });
 
@@ -44,16 +44,21 @@
                 },
             };
 
-            datasets.push({
+            let dataset = {
                 label: label,
-                data: asset,
+                data: asset.data,
                 borderColor: colors[i],
                 fill: false,
                 cubicInterpolationMode: 'monotone',
                 tension: 0.4,
                 yAxisID: yAxisId,
                 scale: scales[yAxisId],
-            });
+            }
+            if (asset.type === 'bars') {
+                dataset.type = 'bar';
+                dataset.barThickness = '10';
+            }
+            datasets.push(dataset);
 
             scales[yAxisId] = {
                 title: {
