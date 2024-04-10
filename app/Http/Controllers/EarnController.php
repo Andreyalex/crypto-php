@@ -32,7 +32,7 @@ class EarnController extends Controller
         $marketVolume = Market
             ::select([new Expression('sum(`volume`) as volume'), new Expression('min(`time`) as time')])
             ->whereIn('asset', explode(',', env('BINANCE_MARKET_ASSETS', 'BTCUSDT')))
-            ->groupBy(new Expression('floor(`time`/86400)'))
+            ->groupBy(new Expression('floor(`time`/1)'))
             ->orderBy('time')
             ->get();
 

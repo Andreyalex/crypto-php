@@ -56,7 +56,8 @@
             }
             if (asset.type === 'bars') {
                 dataset.type = 'bar';
-                dataset.barThickness = '10';
+                dataset.barThickness = 2;
+                dataset.backgroundColor = '#001122';
             }
             datasets.push(dataset);
 
