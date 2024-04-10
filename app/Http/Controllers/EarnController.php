@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\EarnApr;
+use App\Models\Market;
 use function array_key_exists;
 use function explode;
 
@@ -22,6 +23,11 @@ class EarnController extends Controller
             ->orderBy('time')
             ->get();
 
+        $marketData = Market
+            ::whereIn('asset', explode(',', env('BINANCE_MARKET_ASSETS', 'BTCUSDT')))
+            ->orderBy('time')
+            ->get();
+
         foreach($data as $item) {
             if (!array_key_exists($item['asset'], $charts)) {
                 $charts[$item['asset']] = [];
@@ -29,6 +35,15 @@ class EarnController extends Controller
             $charts[$item['asset']][] = [
                 'x' => $item->time * 1000,
                 'y' => round($item->earn_apr * 10000) / 100
+            ];
+        }
+        foreach($marketData as $item) {
+            if (!array_key_exists($item['asset'].' market', $charts)) {
+                $charts[$item['asset'].' market'] = [];
+            }
+            $charts[$item['asset'].' market'][] = [
+                'x' => $item->time * 1000,
+                'y' => ($item->c)
             ];
         }
         return view('earn-apr', [
