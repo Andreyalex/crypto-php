@@ -15,9 +15,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('earn-apr:start')
-            ->everyMinute()
-            ->withoutOverlapping();
+        if (env('AUTOSTART_EARNAPR')) {
+            $schedule->command('earn-apr:start')
+                ->everyMinute()
+                ->withoutOverlapping();
+        }
     }
 
     /**

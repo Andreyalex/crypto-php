@@ -40,7 +40,7 @@ class EarnDaemon
             try {
                 $this->pullSimpleEarnApr();
             } catch (Throwable $e) {
-                Log::error($e);
+                Log::error($e->getMessage());
                 throw $e;
             }
         });
