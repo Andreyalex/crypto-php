@@ -69,6 +69,9 @@ return [
             'driver' => 'monolog',
             'handler' => TelegramBotHandler::class,
             'formatter' => Monolog\Formatter\LineFormatter::class,
+            'formatter_with' => [
+                'format' => '[%datetime%] %channel%.%level_name%: %message%',
+            ],
             'level' => 'error',
             'with' => [
                 'apiKey' => env('TELEGRAM_BOT_TOKEN'),

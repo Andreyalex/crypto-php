@@ -4,8 +4,10 @@ namespace App\Robot;
 
 use function explode;
 use Illuminate\Console\OutputStyle;
+use Illuminate\Support\Facades\Log;
 use React\EventLoop\Loop;
 use Symfony\Component\Console\Output\OutputInterface;
+use Throwable;
 
 class EarnDaemon
 {
@@ -35,7 +37,12 @@ class EarnDaemon
         // first time right now. Next will be in {$seconds} seconds
         $this->pullSimpleEarnApr();
         Loop::addPeriodicTimer($seconds, function () {
-            $this->pullSimpleEarnApr();
+            try {
+                $this->pullSimpleEarnApr();
+            } catch (Throwable $e) {
+                Log::error($e);
+                throw $e;
+            }
         });
     }
 
